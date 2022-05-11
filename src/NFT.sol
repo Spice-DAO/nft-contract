@@ -15,12 +15,17 @@ error NoEthBalance();
 
 contract NFT is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
+    using Strings for uint256;
+
 
     Counters.Counter private _tokenIdCounter;
 
     uint256 public totalSupply = 0;
     string public baseURI;
-    
+    bool public revealed = false;
+    string public notRevealedURI = "NOTREVEALED.JPG";
+    string public baseExtension = ".json";
+
     uint256 public immutable maxSupply = 10000;
     uint256 public immutable price = 0.15 ether;
     uint256 public immutable maxAmountPerTrx = 5;
@@ -34,9 +39,7 @@ contract NFT is ERC721URIStorage, Ownable {
 
     /// @notice Creates an NFT Drop
     /// @param _baseURI The baseURI for the token that will be used for metadata.
-    constructor(
-        string memory _baseURI
-    ) ERC721("Ancient Enemies", "AE") {
+    constructor(string memory _baseURI) ERC721("Ancient Enemies", "AE") {
         baseURI = _baseURI;
     }
 
@@ -60,7 +63,6 @@ contract NFT is ERC721URIStorage, Ownable {
         }
     }
 
-
     /*///////////////////////////////////////////////////////////////
                             ETH WITHDRAWAL
     //////////////////////////////////////////////////////////////*/
@@ -71,6 +73,49 @@ contract NFT is ERC721URIStorage, Ownable {
         SafeTransferLib.safeTransferETH(vaultAddress, address(this).balance);
     }
 
+    /*///////////////////////////////////////////////////////////////
+                                REVEAL
+    //////////////////////////////////////////////////////////////*/
 
+    /// @notice Reveals the URI.
+    function reveal() public onlyOwner {
+        revealed = true;
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+
+        if (revealed == false) {
+            return notRevealedURI;
+        }
+
+        string memory currentBaseURI = baseURI;
+        return
+            bytes(currentBaseURI).length > 0
+                ? string(
+                    abi.encodePacked(
+                        currentBaseURI,
+                        tokenId.toString(),
+                        baseExtension
+                    )
+                )
+                : "";
+    }
+
+    // function whitelistUser(address _user) public onlyOwner {
+    //     whitelisted[_user] = true;
+    // }
+
+    // function removeWhitelistUser(address _user) public onlyOwner {
+    //     whitelisted[_user] = false;
+    // }
 }
-

@@ -73,4 +73,29 @@ contract NFTTest is DSTest {
         cheats.deal(address(1), 2 ether);
         nft.mintNft{value: 0.3 ether}(5);
     }
+
+    function testWithdraw() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.15 ether}(1);
+        nft.withdraw();
+        assertGt(address(1234).balance, 0);
+    }
+
+    function testReveal() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.15 ether}(1);
+        assertEq(nft.tokenURI(1), "NOTREVEALED.JPG");
+    }
+
+    function testReveal2() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.15 ether}(1);
+        nft.reveal();
+        assertEq(nft.tokenURI(1), "https://ipfs.io/ipfs/QmU7VWfd3DN1Hh8fjALhQyJLgtkwxkYP2zz9MDT4rkyVJ11.json");
+        }
+
+
 }
