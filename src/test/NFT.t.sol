@@ -19,19 +19,21 @@ interface CheatCodes {
 }
 
 
+
 contract NFTTest is DSTest {
     CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
+    NFT nft;
 
 
     function setUp() public {
         //console.log(unicode"🧪 Testing Mint...");
         //greeter = new Greeter("gm");
         //test = new ErrorsTest();
+        nft = new NFT("https://ipfs.io/ipfs/QmU7VWfd3DN1Hh8fjALhQyJLgtkwxkYP2zz9MDT4rkyVJ1");
     }
 
 
     function testFailMint() public {
-        NFT nft = new NFT("https://ipfs.io/ipfs/QmU7VWfd3DN1Hh8fjALhQyJLgtkwxkYP2zz9MDT4rkyVJ1");
         assertEq(address(nft), address(0));
     }
 }
