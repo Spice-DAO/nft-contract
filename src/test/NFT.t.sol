@@ -95,7 +95,15 @@ contract NFTTest is DSTest {
         nft.mintNft{value: 0.15 ether}(1);
         nft.reveal();
         assertEq(nft.tokenURI(1), "https://ipfs.io/ipfs/QmU7VWfd3DN1Hh8fjALhQyJLgtkwxkYP2zz9MDT4rkyVJ11.json");
-        }
+    }
 
+
+    function testFailReveal() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.15 ether}(1);
+        cheats.prank(address(1));
+        nft.reveal();
+    }
 
 }
