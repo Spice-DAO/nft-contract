@@ -32,8 +32,20 @@ contract NFTTest is DSTest {
         nft = new NFT("https://ipfs.io/ipfs/QmU7VWfd3DN1Hh8fjALhQyJLgtkwxkYP2zz9MDT4rkyVJ1");
     }
 
+    function testContractGas() public {
+        NFT testNFT = new NFT("https://ipfs.io/ipfs/QmU7VWfd3DN1Hh8fjALhQyJLgtkwxkYP2zz9MDT4rkyVJ1");
+    }
 
-    function testFailMint() public {
+
+    function testFailLaunch() public {
         assertEq(address(nft), address(0));
     }
+
+    function testMint() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.15 ether}(1);
+        assertEq(nft.balanceOf(address(1)), 1);
+    }
+
 }
