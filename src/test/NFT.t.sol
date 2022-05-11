@@ -48,4 +48,29 @@ contract NFTTest is DSTest {
         assertEq(nft.balanceOf(address(1)), 1);
     }
 
+    function testFailMintPrice() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.12 ether}(1);
+        assertEq(nft.balanceOf(address(1)), 1);
+    }
+
+    function testMultiMint() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.3 ether}(2);
+        assertEq(nft.balanceOf(address(1)), 2);
+    }
+
+    function testFailMultiMintPrice() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.1 ether}(2);
+    }
+    
+    function testFailMultiMintQuantity() public {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.3 ether}(5);
+    }
 }
