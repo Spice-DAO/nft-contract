@@ -89,6 +89,7 @@ contract NFTTest is DSTest {
         assertEq(nft.tokenURI(1), "NOTREVEALED.JPG");
     }
 
+    
     function testReveal2() public {
         cheats.prank(address(1));
         cheats.deal(address(1), 2 ether);
@@ -97,13 +98,49 @@ contract NFTTest is DSTest {
         assertEq(nft.tokenURI(1), "https://ipfs.io/ipfs/QmU7VWfd3DN1Hh8fjALhQyJLgtkwxkYP2zz9MDT4rkyVJ11.json");
     }
 
-
+    //Only owner can set contract to revealed
     function testFailReveal() public {
         cheats.prank(address(1));
         cheats.deal(address(1), 2 ether);
         nft.mintNft{value: 0.15 ether}(1);
         cheats.prank(address(1));
         nft.reveal();
+    }
+
+    function testTransfer() public 
+    {
+        cheats.prank(address(1));
+        cheats.deal(address(1), 2 ether);
+        nft.mintNft{value: 0.15 ether}(1);
+        cheats.prank(address(1));
+        nft.safeTransferFrom(address(1), address(2), 1);
+        assertEq(nft.balanceOf(address(2)), 1);
+    }
+
+
+    function testMaxMint() public {
+        for(uint160 i = 1; i < 10000; i++){
+            cheats.prank(address(i));
+            cheats.deal(address(i), 2 ether);
+            nft.mintNft{value: 0.15 ether}(1);
+        }
+
+        bool testResult = true;
+        for(uint160 i= 1; i < 10000; i++){
+            if(nft.balanceOf(address(i)) == 0){
+                testResult = false;
+            }
+        assertTrue(testResult);
+        }
+    }
+
+    function testFailMaxMint() public {
+        for(uint160 i = 1; i < 10000; i++){
+            cheats.prank(address(i));
+            cheats.deal(address(i), 2 ether);
+            nft.mintNft{value: 0.15 ether}(1);
+        }
+
     }
 
 }
